@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "armortweaks",
+  "version": "${version}",
+  "name": "ArmorTweaks",
+  "description": "Mod that changes how armor calculations work slightly",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/armortweaks/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.blumbo.armortweaks.client.ArmorTweaksClient"
+    ],
+    "main": [
+      "net.blumbo.armortweaks.ArmorTweaks"
+    ]
+  },
+  "mixins": [
+    "armortweaks.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.12",
+    "minecraft": "1.18.1"
+  }
+}
