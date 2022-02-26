@@ -8,7 +8,8 @@ Yes
 
 # What does it exactly do
 
-Minecraft currently uses this formula to calculate damage
+Minecraft currently uses this formula to calculate damage:
 <p align="left">
-  <img src="https://i.imgur.com/Y6ie9Dx.png" width="650" title="hover text">
+  <img src="https://i.imgur.com/Nfm47Uj.png" width="650" title="hover text">
 </p>
+...where damage stands for base damage (for example the attack damage of a sword which was used)
