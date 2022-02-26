@@ -29,14 +29,14 @@ In my opinion vanilla armor calculations have some flaws, so I created the mod t
 
 # Modifying variables in the mod
 The mod uses scoreboard values to allow configuring the mod and changing some variables of the formula in-game.
-#### Setup
+### Setup
 To do that you first need create a dummy scoreboard objective named "armor.tweaks" using the following command:  
 **/scoreboard objectives add armor.tweaks dummy**  
 I also recommend adding the scoreboard to the sidebar for a better overview of what you will have changed later on:  
 **/scoreboard objectives setdisplay sidebar armor.tweaks**  
 You can't see a sidebar yet, but as soon as you add a value to the scoreboard a sidebar will appear.
 
-#### Modifying values in the formula
+### Modifying values in the formula
 Here's what you're able to change in the formula:
 <p align="left">
   <img src="https://i.imgur.com/tMUlHSu.png" width="650" title="hover text">
@@ -50,7 +50,7 @@ To change enchantment.nerf use the following command:
 **/scoreboard players set enchantment.nerf armor.tweaks (your value)**  
 Reasonable numbers for enchantment.nerf are something between 2 and 30.  Setting this below 1 sets it back to it's default value 15.
 
-#### Disabling parts of the formula
+### Disabling parts of the formula
 You can also replace parts of the mod formula with parts from the vanilla formula and basically make the mod change nothing.
 <p align="left">
   <img src="https://i.imgur.com/7sTWZ9C.png" width="650" title="hover text">
@@ -64,7 +64,7 @@ To stop the mod from changing enchantment related calculations (marked in purple
 **/scoreboard players set vanilla.enchantment armor.tweaks 1**  
 To change it back set the score back to 0.
 
-#### Enabling/disabling damage feedback messages
+### Enabling/disabling damage feedback messages
 By default, the mod sends a message into the console every time an entity gets hit. The message displays 3 values and looks something like this:  
 Base: 10.0 | Armor: 5.0 | Enchantments: 2.5  
 "Base" shows the damage originally done, "Armor" shows damage after armor calculations and "Enchantments" shows damage after enchantment (or all) calculations.
