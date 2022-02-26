@@ -1,16 +1,15 @@
 package net.blumbo.armortweaks.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,19 +20,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
-    @Shadow @Nullable public abstract LivingEntity getAttacker();
+    @Shadow private DamageSource lastDamageSource;
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
+    public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     // Modify armor protection
-    @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"))
+    @Redirect(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/CombatRules;getDamageAfterAbsorb(FFF)F"))
     protected float applyArmorToDamage(float damage, float armor, float armorToughness) {
 
         if (useVanillaArmor()) {
             float mainFormula = armor - (4.0F * damage) / (8.0F + armorToughness);
-            float usedFormula = MathHelper.clamp(mainFormula, armor * 0.2F, 20.0F);
+            float usedFormula = Mth.clamp(mainFormula, armor * 0.2F, 20.0F);
             return damage * (1.0F - usedFormula / 25.0F);
         } else {
             return damage * (1.0F - armor / getArmorDivisor());
@@ -42,11 +41,11 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     // Modify armor enchantment protection
-    @Redirect(method = "applyEnchantmentsToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getInflictedDamage(FF)F"))
+    @Redirect(method = "getDamageAfterMagicAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/CombatRules;getDamageAfterMagicAbsorb(FF)F"))
     protected float applyEnchantmentsToDamage(float damage, float protection) {
 
         if (useVanillaEnchantment()) {
-            protection = MathHelper.clamp(protection, 0.0F, 20.0F);
+            protection = Mth.clamp(protection, 0.0F, 20.0F);
             return damage * (1.0F - protection / 25.0F);
         } else {
             float number = getEnchantmentNerfValue();
@@ -65,19 +64,19 @@ public abstract class LivingEntityMixin extends Entity {
     float armor;
     float enchantment;
 
-    @Inject(at = @At("HEAD"), method = "applyArmorToDamage")
+    @Inject(at = @At("HEAD"), method = "getDamageAfterArmorAbsorb")
     protected void baseDamageDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         this.base = amount;
     }
-    @Inject(at = @At("HEAD"), method = "applyEnchantmentsToDamage")
+    @Inject(at = @At("HEAD"), method = "getDamageAfterMagicAbsorb")
     public void armorDamageDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         this.armor = amount;
     }
-    @Inject(at = @At("RETURN"), method = "applyEnchantmentsToDamage")
+    @Inject(at = @At("RETURN"), method = "getDamageAfterMagicAbsorb")
     public void enchantmentDamageDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         this.enchantment = amount;
     }
-    @Inject(at = @At("RETURN"), method = "damage")
+    @Inject(at = @At("RETURN"), method = "hurt")
     protected void sendDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         if (!sendDamageFeedback()) return;
 
@@ -88,10 +87,10 @@ public abstract class LivingEntityMixin extends Entity {
             message = "\2477" + message.replaceAll("\\|", "\2478|\2477");
 
             if (getType() == EntityType.PLAYER) {
-                ((PlayerEntity)(Entity)this).sendMessage(Text.of("\247c[\uD83D\uDEE1] " + message), false);
+                this.sendMessage(Component.nullToEmpty("\247c[\uD83D\uDEE1] " + message), null);
             }
-            if (getAttacker() instanceof PlayerEntity) {
-                ((PlayerEntity)getAttacker()).sendMessage(Text.of("\247a[\uD83D\uDDE1] " + message), false);
+            if (lastDamageSource != null && lastDamageSource.getEntity() instanceof Player) {
+                lastDamageSource.getEntity().sendMessage(Component.nullToEmpty("\247a[\uD83D\uDDE1] " + message), null);
             }
 
         }
@@ -102,9 +101,9 @@ public abstract class LivingEntityMixin extends Entity {
 
     // Returns the specified scoreboard value from armor.tweaks objective
     protected int getArmorTweakValue(String playerName) {
-        Scoreboard scoreboard = getEntityWorld().getScoreboard();
-        ScoreboardObjective objective = scoreboard.getObjective("armor.tweaks");
-        return scoreboard.getPlayerScore(playerName, objective).getScore();
+        Scoreboard scoreboard = level.getScoreboard();
+        Objective objective = scoreboard.getObjective("armor.tweaks");
+        return scoreboard.getOrCreatePlayerScore(playerName, objective).getScore();
     }
 
     // Scoreboard check for if damage values should be sent anywhere
