@@ -10,7 +10,9 @@ import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -19,6 +21,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
+
+    @Shadow @Nullable private DamageSource lastDamageSource;
+
+    @Shadow @Nullable public abstract LivingEntity getAttacker();
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -71,15 +77,26 @@ public abstract class LivingEntityMixin extends Entity {
         this.armor = amount;
     }
     @Inject(at = @At("RETURN"), method = "applyEnchantmentsToDamage")
-    protected void sendDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
+    public void enchantmentDamageDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         this.enchantment = amount;
+    }
+    @Inject(at = @At("RETURN"), method = "damage")
+    protected void sendDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
+        if (!sendDamageFeedback()) return;
 
         String message = "Base: " + base + " | Armor: " + armor + " | Enchantments: " + enchantment;
         System.out.println(message);
 
-        if (getType() == EntityType.PLAYER && sendDebugToChat()) {
+        if (sendDamageToChat()) {
             message = "\2477" + message.replaceAll("\\|", "\2478|\2477");
-            ((PlayerEntity)(Entity)this).sendMessage(Text.of("\2475" + message), false);
+
+            if (getType() == EntityType.PLAYER) {
+                ((PlayerEntity)(Entity)this).sendMessage(Text.of("\247c[\uD83D\uDEE1] " + message), false);
+            }
+            if (getAttacker() instanceof PlayerEntity) {
+                ((PlayerEntity)getAttacker()).sendMessage(Text.of("\247a[\uD83D\uDDE1] " + message), false);
+            }
+
         }
 
     }
@@ -93,9 +110,13 @@ public abstract class LivingEntityMixin extends Entity {
         return scoreboard.getPlayerScore(playerName, objective).getScore();
     }
 
+    // Scoreboard check for if damage values should be sent anywhere
+    protected boolean sendDamageFeedback() {
+        return !(getArmorTweakValue("send.damage") < 0);
+    }
     // Scoreboard check for if damage values should be sent to the chat
-    protected boolean sendDebugToChat() {
-        return getArmorTweakValue("chat.debug") == 1;
+    protected boolean sendDamageToChat() {
+        return getArmorTweakValue("send.damage") > 0;
     }
 
     // Scoreboard check for if vanilla armor calculations should be used
@@ -113,7 +134,6 @@ public abstract class LivingEntityMixin extends Entity {
         if (score > 0) return (float)score;
         else return 30.0F;
     }
-
     // Scoreboard check for the number used in enchantment protection
     protected float getEnchantmentNerfValue() {
         int score = getArmorTweakValue("enchantment.nerf");
