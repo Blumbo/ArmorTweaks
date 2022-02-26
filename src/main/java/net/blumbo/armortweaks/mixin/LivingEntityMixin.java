@@ -1,6 +1,5 @@
 package net.blumbo.armortweaks.mixin;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -9,11 +8,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -22,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
-    @Shadow protected abstract void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition);
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -32,12 +28,12 @@ public abstract class LivingEntityMixin extends Entity {
     @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"))
     protected float applyArmorToDamage(float damage, float armor, float armorToughness) {
 
-        if (!useVanilla()) {
-            return damage * (1.0F - armor / getArmorProtectionDivisor());
+        if (useVanillaArmor()) {
+            float mainFormula = armor - (4.0F * damage) / (8.0F + armorToughness);
+            float usedFormula = MathHelper.clamp(mainFormula, armor * 0.2F, 20.0F);
+            return damage * (1.0F - usedFormula / 25.0F);
         } else {
-            float f = 2.0F + armorToughness / 4.0F;
-            float g = MathHelper.clamp(armor - damage / f, armor * 0.2F, 20.0F);
-            return damage * (1.0F - g / 25.0F);
+            return damage * (1.0F - armor / getArmorDivisor());
         }
 
     }
@@ -46,13 +42,13 @@ public abstract class LivingEntityMixin extends Entity {
     @Redirect(method = "applyEnchantmentsToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getInflictedDamage(FF)F"))
     protected float applyEnchantmentsToDamage(float damage, float protection) {
 
-        if (!useVanilla()) {
-            float number = getArmorEnchantmentNerfValue();
-            protection = Math.max(0.0F, protection);
-            return damage * number / (number + protection);
-        } else {
+        if (useVanillaEnchantment()) {
             protection = MathHelper.clamp(protection, 0.0F, 20.0F);
             return damage * (1.0F - protection / 25.0F);
+        } else {
+            float number = getEnchantmentNerfValue();
+            protection = Math.max(0.0F, protection);
+            return damage * number / (number + protection);
         }
 
     }
@@ -77,11 +73,15 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(at = @At("RETURN"), method = "applyEnchantmentsToDamage")
     protected void sendDebug(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
         this.enchantment = amount;
+
         String message = "Base: " + base + " | Armor: " + armor + " | Enchantments: " + enchantment;
         System.out.println(message);
+
         if (getType() == EntityType.PLAYER && sendDebugToChat()) {
-            ((PlayerEntity)(Entity)this).sendMessage(Text.of(message), false);
+            message = "\2477" + message.replaceAll("\\|", "\2478|\2477");
+            ((PlayerEntity)(Entity)this).sendMessage(Text.of("\2475" + message), false);
         }
+
     }
 
     // Scoreboards ----------------------------------------------------------------------------
@@ -99,19 +99,23 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     // Scoreboard check for if vanilla armor calculations should be used
-    protected boolean useVanilla() {
-        return getArmorTweakValue("use.vanilla") == 1;
+    protected boolean useVanillaArmor() {
+        return getArmorTweakValue("vanilla.armor") == 1;
+    }
+    // Scoreboard check for if vanilla enchantment protection calculations should be used
+    protected boolean useVanillaEnchantment() {
+        return getArmorTweakValue("vanilla.enchantment") == 1;
     }
 
     // Scoreboard check for the number divided from armor protection value
-    protected float getArmorProtectionDivisor() {
+    protected float getArmorDivisor() {
         int score = getArmorTweakValue("armor.divisor");
         if (score > 0) return (float)score;
         else return 30.0F;
     }
 
     // Scoreboard check for the number used in enchantment protection
-    protected float getArmorEnchantmentNerfValue() {
+    protected float getEnchantmentNerfValue() {
         int score = getArmorTweakValue("enchantment.nerf");
         if (score > 0) return (float)score;
         else return 15.0F;
