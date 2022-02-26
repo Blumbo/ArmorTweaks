@@ -12,6 +12,13 @@ Minecraft currently uses this formula to calculate damage:
 <p align="left">
   <img src="https://i.imgur.com/o1xFYJJ.png" width="700" title="hover text">
 </p>
+
+In my opinion vanilla armor calculations have some flaws, so I created the mod to experiment with different armor calculations. Here's what the mod uses to calculate damage:
+
+<p align="left">
+  <img src="https://i.imgur.com/uwlAqKh.png" width="500" title="hover text">
+</p>
+
 Here's a quick explanation of what different things mean:  
 
 - damage stands for how much damage was originally done (for example the attack damage of a weapon which was used).  
@@ -22,10 +29,6 @@ Here's a quick explanation of what different things mean:
 - max(a, b) means that the highest value of a and b will be used. For example if a > b, then max(a, b) is equal to a.  
 - min(a, b) means that the lowest value of a and b will be used.  
 <a/>
-In my opinion vanilla armor calculations have some flaws, so I created the mod to experiment with different armor calculations. Here's what the mod uses to calculate damage:
-<p align="left">
-  <img src="https://i.imgur.com/uwlAqKh.png" width="500" title="hover text">
-</p>
 
 # Modifying variables in the mod
 The mod uses scoreboard values to allow configuring the mod and changing some variables of the formula in-game.
