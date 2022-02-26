@@ -10,3 +10,7 @@ Yes
 
 Minecraft currently uses this formula to calculate damage
 ![alt text](https://i.imgur.com/Y6ie9Dx.png)
+<p align="center">
+  <img src="https://i.imgur.com/Y6ie9Dx.png" width="350" title="hover text">
+  <img src="https://i.imgur.com/Y6ie9Dx.png" width="350" alt="accessibility text">
+</p>
