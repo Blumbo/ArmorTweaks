@@ -55,6 +55,7 @@ You can also replace parts of the mod formula with parts from the vanilla formul
 <p align="left">
   <img src="https://i.imgur.com/7sTWZ9C.png" width="650" title="hover text">
 </p>
+
 To stop the mod from changing non-enchantment related calculations (marked in blue) use the following command:  
 /scoreboard players set vanilla.armor armor.tweaks 1  
 To change it back set the score back to 0.
@@ -77,4 +78,5 @@ In the chat this will look something like:
 <p align="left">
   <img src="https://i.imgur.com/sdgXjB3.png" width="500" title="hover text">
 </p>
+
 To reset this to console-only, set the value back to 0.
