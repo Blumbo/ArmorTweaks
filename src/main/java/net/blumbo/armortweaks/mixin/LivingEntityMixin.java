@@ -21,9 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
-
-    @Shadow @Nullable private DamageSource lastDamageSource;
-
     @Shadow @Nullable public abstract LivingEntity getAttacker();
 
     public LivingEntityMixin(EntityType<?> type, World world) {
