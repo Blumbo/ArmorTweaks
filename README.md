@@ -28,7 +28,7 @@ In my opinion vanilla armor calculations have some flaws, so I created the mod t
 </p>
 
 # Modifying variables in the mod
-The mod uses scoreboard values to allow changing some variables of the formula in-game.
+The mod uses scoreboard values to allow configuring the mod and changing some variables of the formula in-game.
 #### Setup
 To do that you first need create a dummy scoreboard objective named "armor.tweaks" using the following command:  
 /scoreboard objectives add armor.tweaks dummy  
