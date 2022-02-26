@@ -1,6 +1,6 @@
 # ArmorTweaks
 
-ArmorTweaks is a fabric mod that changes the way Minecraft armor calculations work, made for exmperimental purposes and ranting ().
+ArmorTweaks is a fabric mod that changes the way Minecraft armor calculations work, made for exmperimental purposes and ranting.
 
 # Download
 
@@ -27,7 +27,7 @@ In my opinion vanilla armor calculations have some flaws, so I created the mod t
   <img src="https://i.imgur.com/uwlAqKh.png" width="500" title="hover text">
 </p>
 
-# Modifying values in the mod
+# Modifying variables in the mod
 #### Setup
 The mod uses scoreboard values to allow changing some variables of the formula in-game.  
 To do that you first need create a dummy scoreboard objective named "armor.tweaks" using the following command:  
