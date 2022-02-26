@@ -2,9 +2,9 @@
 
 ArmorTweaks is a fabric mod that changes the way Minecraft armor calculations work, made for exmperimental purposes and ranting ().
 
-# Installation
+# Download
 
-Yes
+1.18.1: https://github.com/Blumbo/ArmorTweaks/releases/download/v1.0/armortweaks-1.18.1-1.0.jar
 
 # What does it exactly do
 
