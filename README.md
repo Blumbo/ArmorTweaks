@@ -8,5 +8,5 @@ Yes
 
 # What does it exactly do
 
-This is the formula Minecraft uses to caldulate damage:
+Minecraft currently uses this formula to calculate damage
 ![alt text](https://i.imgur.com/Y6ie9Dx.png)
