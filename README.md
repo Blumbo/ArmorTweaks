@@ -11,6 +11,9 @@ The server's discord: https://discord.gg/Mj2ehN9XVN
 - Enchantment calculations use the (15/(15+x)) formula instead of (1-x/25) where x is enchantment protection
 - Enchantment protection is no longer capped at 20
 - Explosions do 0.5625 times the damage as in 1.16 (as a balance for nerfed protection)
+<a/>
+
+Note: Due to the way I've made the mod a lot of weapons do not show their accurate attack damage in-game. The only source with accurate information about weapon damage is this github page.
 ### Armor tweaks settings
 Armor tweaks settings (scoreboard values) used in Combat Tweaks server:  
 - armor.divisor armor.tweaks 30
