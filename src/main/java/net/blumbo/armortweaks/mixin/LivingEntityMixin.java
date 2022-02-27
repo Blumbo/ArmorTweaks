@@ -28,9 +28,21 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    // Modify armor protection
+    // Armor and damage modifications  -----------------------------------------------------------
+
+    // Check for explosion
+    boolean isExplosion = false;
+    @Inject(method = "hurt", at = @At("HEAD"))
+    protected void hurt(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir) {
+        if (damageSource.isExplosion()) isExplosion = true;
+        else isExplosion = false;
+    }
+
+    // Modify armor protection and crystal damage
     @Redirect(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/CombatRules;getDamageAfterAbsorb(FFF)F"))
     protected float applyArmorToDamage(float damage, float armor, float armorToughness) {
+
+        if (this.isExplosion) damage *= 0.5625F; // 9 / 16
 
         if (useVanillaArmor()) {
             float mainFormula = armor - (4.0F * damage) / (8.0F + armorToughness);
