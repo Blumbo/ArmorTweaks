@@ -34,8 +34,7 @@ public abstract class LivingEntityMixin extends Entity {
     boolean isExplosion = false;
     @Inject(method = "hurt", at = @At("HEAD"))
     protected void hurt(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir) {
-        if (damageSource.isExplosion()) isExplosion = true;
-        else isExplosion = false;
+        isExplosion = damageSource.isExplosion();
     }
 
     // Modify armor protection and crystal damage
