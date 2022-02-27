@@ -1,6 +1,9 @@
 package net.blumbo.armortweaks.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -10,12 +13,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.UUID;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -86,11 +92,12 @@ public abstract class LivingEntityMixin extends Entity {
         if (sendDamageToChat()) {
             message = "\2477" + message.replaceAll("\\|", "\2478|\2477");
 
+            UUID uuid = getUUID();
             if (getType() == EntityType.PLAYER) {
-                this.sendMessage(Component.nullToEmpty("\247c[\uD83D\uDEE1] " + message), null);
+                this.sendMessage(new TextComponent("\247c[\uD83D\uDEE1] " + message), uuid);
             }
             if (lastDamageSource != null && lastDamageSource.getEntity() instanceof Player) {
-                lastDamageSource.getEntity().sendMessage(Component.nullToEmpty("\247a[\uD83D\uDDE1] " + message), null);
+                lastDamageSource.getEntity().sendMessage(new TextComponent("\247b[\uD83D\uDDE1] " + message), uuid);
             }
 
         }
