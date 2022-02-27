@@ -91,7 +91,7 @@ public abstract class LivingEntityMixin extends Entity {
                 ((PlayerEntity)(Entity)this).sendMessage(Text.of("\247c[\uD83D\uDEE1] " + message), false);
             }
             if (getAttacker() instanceof PlayerEntity) {
-                ((PlayerEntity)getAttacker()).sendMessage(Text.of("\247a[\uD83D\uDDE1] " + message), false);
+                ((PlayerEntity)getAttacker()).sendMessage(Text.of("\247b[\uD83D\uDDE1] " + message), false);
             }
 
         }
