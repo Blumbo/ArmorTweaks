@@ -1,5 +1,6 @@
-# Armor Tweaks server mod
-This is a mod for combat snapshot 8c which tweaks different combat mechanics, including some parts from the Armor Tweaks mod.
+# Combat Tweaks server mod
+Combat Tweaks is a combat test 8c mod and a fork of Armor Tweaks. The mod changes some combat mechanics and was created for a server I'm working on.
+The server's discord: https://discord.gg/Mj2ehN9XVN
 ### List of everything different from combat snapshot 8c:  
 - Swords do the same amount of damage as in 1.16
 - Axes do 1 more damage than swords
