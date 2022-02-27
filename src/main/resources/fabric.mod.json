@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "armortweaks",
   "version": "${version}",
-  "name": "ArmorTweaks",
+  "name": "CombatTweaks",
   "description": "Mod that changes how armor calculations work slightly",
   "authors": [],
   "contact": {},
