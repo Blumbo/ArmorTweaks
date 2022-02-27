@@ -6,6 +6,9 @@ ArmorTweaks is a fabric mod that changes the way Minecraft armor calculations wo
 
 1.18.1: https://github.com/Blumbo/ArmorTweaks/releases/download/v1.0/armortweaks-1.18.1-1.0.jar
 
+Combat Test 8c: https://github.com/Blumbo/ArmorTweaks/releases/download/Combat-Test-8c-v1.0/armortweaks-1.16_combat-6-1.0.jar
+Tutorial on installing mods for combat snapshots: https://www.youtube.com/watch?v=XmNWU-tQs_c
+
 # What does it exactly do
 
 Minecraft currently uses this formula to calculate damage:
