@@ -23,14 +23,13 @@ In my opinion vanilla armor calculations have some flaws, so I created the mod t
 </p>
 
 Here's a quick explanation of what different things mean:  
-
+- max(a, b) means that the highest value of a and b will be used. For example if a > b, then max(a,b) is equal to a. If b > a, then max(a,b) is equal to b.  
+- min(a, b) means that the lowest value of a and b will be used.  
 - damage stands for how much damage was originally done (for example the attack damage of a weapon which was used).  
 - final damage is how much damage the player will end up taking.  
 - armor is the amount of armor points the player's armor has.  
 - toughness is the amount of armor toughness points the player's armor has.  
 - enchantment prot is how much enchantment protection the player has. For example, Protection IV on each piece of armor gives 16 protection points.
-- max(a, b) means that the highest value of a and b will be used. For example if a > b, then max(a, b) is equal to a.  
-- min(a, b) means that the lowest value of a and b will be used.  
 <a/>
 
 # Modifying variables in the mod
