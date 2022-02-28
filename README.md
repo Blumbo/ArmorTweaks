@@ -13,7 +13,7 @@ Tutorial on installing mods for combat snapshots: https://www.youtube.com/watch?
 
 Minecraft currently uses this formula to calculate damage:
 <p align="left">
-  <img src="https://i.imgur.com/o1xFYJJ.png" width="700" title="hover text">
+  <img src="https://i.imgur.com/IN3oP7W.png" width="700" title="hover text">
 </p>
 
 In my opinion vanilla armor calculations have some flaws, so I created the mod to experiment with different armor calculations. Here's what the mod uses to calculate damage:
@@ -58,7 +58,7 @@ Reasonable numbers for enchantment.nerf are something between 2 and 30.  Setting
 ### Disabling parts of the formula
 You can also replace parts of the mod formula with parts from the vanilla formula and basically make the mod change nothing.
 <p align="left">
-  <img src="https://i.imgur.com/7sTWZ9C.png" width="650" title="hover text">
+  <img src="https://i.imgur.com/MnDgpvs.png" width="650" title="hover text">
 </p>
 
 To stop the mod from changing non-enchantment related calculations (marked in blue) use the following command:  
