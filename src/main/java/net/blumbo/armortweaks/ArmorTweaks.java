@@ -18,12 +18,14 @@ public class ArmorTweaks implements ModInitializer {
     public static final int armorMultiplier = 60;
 
     public static boolean vanillaArmor = false;
+    public static boolean vanillaEnchantment = false;
+    public static boolean vanillaDamage = false;
+
     // Higher numbers mean more resistance for the player
     public static Integer nakedBuff = 10;
     // Higher numbers mean lower armor protection efficiency
     public static Integer armorNerf = 144;
 
-    public static boolean vanillaEnchantment = false;
     // Higher numbers mean lower enchantment protection efficiency
     public static Integer eProtNerf = 256;
     // Higher numbers mean higher enchantment protection efficiency, mainly affects low protection levels
@@ -63,6 +65,9 @@ public class ArmorTweaks implements ModInitializer {
         if (score != null) vanillaArmor = score == 1;
         score = getTweakScore("vanilla.ench", vanillaEnchantment);
         if (score != null) vanillaEnchantment = score == 1;
+        score = getTweakScore("vanilla.damage", vanillaDamage);
+        if (score != null) vanillaDamage = score == 1;
+
         score = getTweakScore("damage.feedback", damageFeedback);
         if (score != null) damageFeedback = score == 1;
     }
