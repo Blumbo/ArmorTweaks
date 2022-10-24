@@ -27,9 +27,9 @@ public class ArmorTweaks implements ModInitializer {
     public static Integer armorNerf = 144;
 
     // Higher numbers mean lower enchantment protection efficiency
-    public static Integer eProtNerf = 256;
+    public static Integer eProtNerf = 11000;
     // Higher numbers mean higher enchantment protection efficiency, mainly affects low protection levels
-    public static Integer eProtLowLevelBuff = 2;
+    public static Integer eProtLowLevelBuff = 10;
 
     public static boolean damageFeedback = false;
 
@@ -37,7 +37,7 @@ public class ArmorTweaks implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(ArmorTweaksCmd::register);
     }
 
-    public static void scoreboardSetup(ServerWorld world) {
+    private static void scoreboardSetup(ServerWorld world) {
         overWorld = world;
         scoreboard = overWorld.getScoreboard();
 
@@ -49,7 +49,8 @@ public class ArmorTweaks implements ModInitializer {
         objective = scoreboard.getObjective(objectiveName);
     }
 
-    public static void reloadValues() {
+    public static void reloadValues(ServerWorld world) {
+        scoreboardSetup(world);
         Integer score;
 
         score = getTweakScore("low.armor.buff", nakedBuff);

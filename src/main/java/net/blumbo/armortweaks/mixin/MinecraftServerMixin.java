@@ -21,8 +21,7 @@ public class MinecraftServerMixin {
 
     @Inject(method = "createWorlds", at = @At("RETURN"))
     public void init(CallbackInfo ci) {
-        ArmorTweaks.scoreboardSetup(worlds.get(World.OVERWORLD));
-        ArmorTweaks.reloadValues();
+        ArmorTweaks.reloadValues(worlds.get(World.OVERWORLD));
     }
 
 }

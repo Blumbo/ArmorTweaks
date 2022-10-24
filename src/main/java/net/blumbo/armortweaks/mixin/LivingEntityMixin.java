@@ -48,9 +48,9 @@ public abstract class LivingEntityMixin extends Entity {
 
         protection = Math.max(0f, protection);
         float nerf = (float)ArmorTweaks.eProtNerf;
-        float lowLevelBuff = (float)ArmorTweaks.eProtLowLevelBuff;
-        protection += lowLevelBuff;
-        return damage * nerf / (nerf - lowLevelBuff * lowLevelBuff + protection * protection);
+        float llb = (float)ArmorTweaks.eProtLowLevelBuff;
+        float p = protection + llb;
+        return damage * nerf / (nerf - llb * llb * llb + p * p * p);
     }
 
     // Code below sends players in combat a message every time they take damage.
