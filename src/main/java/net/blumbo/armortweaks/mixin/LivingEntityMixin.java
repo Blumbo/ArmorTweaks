@@ -26,10 +26,14 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
+    private boolean useVanillaArmor() {
+        return !((Object)this instanceof PlayerEntity) || ArmorTweaks.vanillaArmor;
+    }
+
     // Modify armor protection
     @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"))
     protected float applyArmorToDamage(float damage, float armor, float armorToughness) {
-        if (!ArmorTweaks.vanillaArmor) {
+        if (!useVanillaArmor()) {
             armor = ArmorTweaks.nakedBuff + armor * ArmorTweaks.armorMultiplier / ArmorTweaks.armorNerf;
         }
 
@@ -41,7 +45,7 @@ public abstract class LivingEntityMixin extends Entity {
     // Modify armor enchantment protection
     @Redirect(method = "modifyAppliedDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getInflictedDamage(FF)F"))
     protected float applyEnchantmentsToDamage(float damage, float protection) {
-        if (ArmorTweaks.vanillaEnchantment) {
+        if (useVanillaArmor()) {
             protection = MathHelper.clamp(protection, 0f, 20f);
             return damage * (1f - protection / 25f);
         }
