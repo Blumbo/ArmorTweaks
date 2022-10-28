@@ -4,9 +4,9 @@ ArmorTweaks (v2) is a fabric mod that changes different armor and damage mechani
 
 # Main features
 - Players take less damage by default, but armor matters less and full netherite is weaker than in vanilla
-- Enchantment protection, especially in higher levels, has been nerfed
+- Enchantment protection has been nerfed and is no longer infinitely strong at a certain protection level
 - Enchantment protection is no longer capped at 20
-- All explosions deal ~70% of vanilla damage (before armor calculations)
+- All explosions deal ~70% of vanilla damage to balance the armor calculation changes
 - Anchor explosion power reduced from 5 to 4.5
 - Pearl damage decreased from 2.5 to 2 hearts
 - Pearl damage untied from feather falling enchantment
