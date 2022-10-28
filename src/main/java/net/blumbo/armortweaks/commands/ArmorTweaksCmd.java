@@ -2,7 +2,6 @@ package net.blumbo.armortweaks.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.blumbo.armortweaks.ArmorTweaks;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.scoreboard.Scoreboard;
@@ -25,33 +24,33 @@ public class ArmorTweaksCmd {
         );
     }
 
-    public static int reload(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    public static int reload(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         ArmorTweaks.reloadValues(source.getWorld());
         source.sendMessage(Text.of("Reloaded armor values from scoreboard."));
         return 0;
     }
 
-    private static int show(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static int show(CommandContext<ServerCommandSource> context) {
         ArmorTweaks.scoreboard.setObjectiveSlot(Scoreboard.SIDEBAR_DISPLAY_SLOT_ID, ArmorTweaks.objective);
         return 0;
     }
 
-    private static int hide(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static int hide(CommandContext<ServerCommandSource> context) {
         if (ArmorTweaks.scoreboard.getObjectiveForSlot(Scoreboard.SIDEBAR_DISPLAY_SLOT_ID) == ArmorTweaks.objective) {
             ArmorTweaks.scoreboard.setObjectiveSlot(Scoreboard.SIDEBAR_DISPLAY_SLOT_ID, null);
         }
         return 0;
     }
 
-    public static int toVanilla(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    public static int toVanilla(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         toggleVanilla(source.getWorld(), 1);
         source.sendMessage(Text.of("Toggled all values to vanilla."));
         return 0;
     }
 
-    public static int unVanilla(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    public static int unVanilla(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         toggleVanilla(source.getWorld(), 0);
         source.sendMessage(Text.of("Toggled all values to modded."));
