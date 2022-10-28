@@ -22,9 +22,9 @@ public class ArmorTweaks implements ModInitializer {
     public static boolean vanillaDamage = false;
 
     // Higher numbers mean more resistance for the player
-    public static Integer nakedBuff = 10;
+    public static Integer nakedBuff = 8;
     // Higher numbers mean lower armor protection efficiency
-    public static Integer armorNerf = 144;
+    public static Integer armorNerf = 120;
 
     // Higher numbers mean lower enchantment protection efficiency
     public static Integer eProtNerf = 11000;
