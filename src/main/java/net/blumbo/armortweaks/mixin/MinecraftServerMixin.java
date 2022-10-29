@@ -2,26 +2,16 @@ package net.blumbo.armortweaks.mixin;
 
 import net.blumbo.armortweaks.ArmorTweaks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Map;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
 
-    @Shadow @Final private Map<RegistryKey<World>, ServerWorld> worlds;
-
-    @Inject(method = "createWorlds", at = @At("RETURN"))
-    public void init(CallbackInfo ci) {
-        ArmorTweaks.reloadValues(worlds.get(World.OVERWORLD));
+    @Inject(at = @At("HEAD"), method = "save")
+    private void save(CallbackInfoReturnable<Boolean> cir) {
+        ArmorTweaks.saveValues();
     }
-
 }

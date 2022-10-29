@@ -11,7 +11,7 @@ public class ExplosionMixin {
 
     @ModifyArg(method = "collectBlocksAndDamageEntities", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     private float setDamage(float damage) {
-        if (ArmorTweaks.vanillaDamage) return damage;
+        if (ArmorTweaks.vanillaDamage()) return damage;
         return (damage - 1f) * 5f / 7f + 1f;
     }
 }

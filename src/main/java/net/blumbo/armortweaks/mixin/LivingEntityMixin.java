@@ -27,17 +27,22 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     private boolean useVanillaArmor() {
-        return !((Object)this instanceof PlayerEntity) || ArmorTweaks.vanillaArmor;
+        return !((Object)this instanceof PlayerEntity) || ArmorTweaks.bools.get(ArmorTweaks.vanillaArmorKey);
     }
     private boolean useVanillaEnchantment() {
-        return !((Object)this instanceof PlayerEntity) || ArmorTweaks.vanillaEnchantment;
+        return !((Object)this instanceof PlayerEntity) || ArmorTweaks.bools.get(ArmorTweaks.vanillaEnchKey);
+    }
+
+    // Small shortcut
+    private int get(String key) {
+        return ArmorTweaks.ints.get(key);
     }
 
     // Modify armor protection
     @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FFF)F"))
     protected float applyArmorToDamage(float damage, float armor, float armorToughness) {
         if (!useVanillaArmor()) {
-            armor = ArmorTweaks.nakedBuff + armor * ArmorTweaks.armorMultiplier / ArmorTweaks.armorNerf;
+            armor = get(ArmorTweaks.nakedBuffKey) + armor * ArmorTweaks.armorMultiplier / get(ArmorTweaks.armorNerfKey);
         }
 
         float protection = armor - (4f * damage) / (8f + armorToughness);
@@ -54,8 +59,8 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         protection = Math.max(0f, protection);
-        float nerf = (float)ArmorTweaks.eProtNerf;
-        float llb = (float)ArmorTweaks.eProtLowLevelBuff;
+        float nerf = (float)get(ArmorTweaks.eProtNerfKey);
+        float llb = (float)get(ArmorTweaks.eProtLowBuffKey);
         float p = protection + llb;
         return damage * nerf / (nerf - llb * llb * llb + p * p * p);
     }
@@ -81,7 +86,7 @@ public abstract class LivingEntityMixin extends Entity {
     }
     @Inject(at = @At("RETURN"), method = "damage")
     protected void sendDamage(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
-        if (!ArmorTweaks.damageFeedback) return;
+        if (!ArmorTweaks.bools.get(ArmorTweaks.sendFeedbackKey)) return;
 
         String message = "Base: " + base + " | Armor: " + armor + " | Enchantments: " + enchantment;
         message = "§7" + message.replaceAll("\\|", "§8|§7");

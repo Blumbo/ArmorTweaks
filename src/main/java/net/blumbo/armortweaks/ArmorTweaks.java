@@ -1,92 +1,142 @@
 package net.blumbo.armortweaks;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 import net.blumbo.armortweaks.commands.ArmorTweaksCmd;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardCriterion;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.fabricmc.loader.api.FabricLoader;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ArmorTweaks implements ModInitializer {
 
-    public static ServerWorld overWorld;
-    public static Scoreboard scoreboard;
-    public static ScoreboardObjective objective;
+    private static final String dir = FabricLoader.getInstance().getConfigDir().toString() + "/armortweaks";
+    private static final String file = "config.json";
 
     public static final int armorMultiplier = 60;
 
-    public static boolean vanillaArmor = false;
-    public static boolean vanillaEnchantment = false;
-    public static boolean vanillaDamage = false;
+    private static final String intsKey = "intValues";
+    public static HashMap<String, Integer> defaultInts = defaultInts();
+    public static HashMap<String, Integer> ints;
+    public static final String nakedBuffKey = "noArmorBuff";
+    public static final String armorNerfKey = "armorNerf" + armorMultiplier;
+    public static final String eProtLowBuffKey = "lowProtBuff";
+    public static final String eProtNerfKey = "protNerf";
 
-    // Higher numbers mean more resistance for the player
-    public static Integer nakedBuff = 8;
-    // Higher numbers mean lower armor protection efficiency
-    public static Integer armorNerf = 120;
+    private static final String boolsKey = "boolValues";
+    public static HashMap<String, Boolean> defaultBools = defaultBools();
+    public static HashMap<String, Boolean> bools;
+    public static final String vanillaArmorKey = "vanillaArmor";
+    public static final String vanillaEnchKey = "vanillaEnch";
+    public static final String vanillaDamageKey = "vanillaDamage";
+    public static final String sendFeedbackKey = "damageFeedback";
 
-    // Higher numbers mean lower enchantment protection efficiency
-    public static Integer eProtNerf = 11000;
-    // Higher numbers mean higher enchantment protection efficiency, mainly affects low protection levels
-    public static Integer eProtLowLevelBuff = 10;
-
-    public static boolean damageFeedback = false;
+    // Shortcut as I use this in many parts of the code
+    public static boolean vanillaDamage() {
+        return bools.get(vanillaDamageKey);
+    }
 
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(ArmorTweaksCmd::register);
+        loadValues();
     }
 
-    private static void scoreboardSetup(ServerWorld world) {
-        overWorld = world;
-        scoreboard = overWorld.getScoreboard();
+    public static void saveValues() {
+        Gson gson = new Gson();
 
-        String objectiveName = "armor.tweaks";
-        if (scoreboard.getObjective(objectiveName) == null) {
-            scoreboard.addObjective(objectiveName, ScoreboardCriterion.DUMMY,
-                    Text.of(objectiveName), ScoreboardCriterion.RenderType.INTEGER);
+        JsonObject object = new JsonObject();
+        object.add(intsKey, gson.toJsonTree(ints));
+        object.add(boolsKey, gson.toJsonTree(bools));
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(dir + "/" + file));
+            writer.write(object.toString());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        objective = scoreboard.getObjective(objectiveName);
     }
 
-    public static void reloadValues(ServerWorld world) {
-        scoreboardSetup(world);
-        Integer score;
-
-        score = getTweakScore("low.armor.buff", nakedBuff);
-        if (score != null) nakedBuff = score;
-        score = getTweakScore("armor.nerf.per" + armorMultiplier, armorNerf);
-        if (score != null) armorNerf = score;
-        score = getTweakScore("low.prot.buff", eProtLowLevelBuff);
-        if (score != null) eProtLowLevelBuff = score;
-        score = getTweakScore("prot.nerf", eProtNerf);
-        if (score != null) eProtNerf = score;
-
-        score = getTweakScore("vanilla.armor", vanillaArmor);
-        if (score != null) vanillaArmor = score == 1;
-        score = getTweakScore("vanilla.ench", vanillaEnchantment);
-        if (score != null) vanillaEnchantment = score == 1;
-        score = getTweakScore("vanilla.damage", vanillaDamage);
-        if (score != null) vanillaDamage = score == 1;
-
-        score = getTweakScore("damage.feedback", damageFeedback);
-        if (score != null) damageFeedback = score == 1;
+    private static void loadValues() {
+        loadHashMaps();
+        addDefaults(defaultInts, ints);
+        addDefaults(defaultBools, bools);
     }
 
-    private static Integer getTweakScore(String scoreName, int score) {
-        if (scoreboard.playerHasObjective(scoreName, objective)) {
-            return scoreboard.getPlayerScore(scoreName, objective).getScore();
+    private static <S> void addDefaults(HashMap<String, S> from, HashMap<String, S> to) {
+        for (Map.Entry<String, S> entry : from.entrySet()) {
+            if (!to.containsKey(entry.getKey())) to.put(entry.getKey(), entry.getValue());
         }
-        scoreboard.getPlayerScore(scoreName, objective).setScore(score);
-        return null;
     }
 
-    private static Integer getTweakScore(String scoreName, boolean score) {
-        if (scoreboard.playerHasObjective(scoreName, objective)) {
-            return scoreboard.getPlayerScore(scoreName, objective).getScore();
+    private static void loadHashMaps() {
+        String file = getFile();
+        if (file == null) {
+            ints = new HashMap<>();
+            bools = new HashMap<>();
+            return;
         }
-        scoreboard.getPlayerScore(scoreName, objective).setScore(score ? 1 : 0);
-        return null;
+        JsonElement element = JsonParser.parseString(file);
+
+        bools = loadHashMap(element, boolsKey);
+
+        ints = new HashMap<>();
+        HashMap<String, Double> doubleVals = loadHashMap(element, intsKey);
+        for (Map.Entry<String, Double> entry : doubleVals.entrySet()) {
+            ints.put(entry.getKey(), entry.getValue().intValue());
+        }
+    }
+
+    private static <S> HashMap<String, S> loadHashMap(JsonElement element, String key) {
+        HashMap<String, S> hashMap;
+        try {
+            Gson gson = new Gson();
+            hashMap = gson.fromJson(((JsonObject)element).get(key), HashMap.class);
+            return hashMap;
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+    }
+
+    private static String getFile() {
+        try {
+            Files.createDirectories(Paths.get(dir));
+            String path = dir + "/" + file;
+
+            if (!Files.exists(Paths.get(path))) return null;
+            return Files.readString(Paths.get(path));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static HashMap<String, Integer> defaultInts() {
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put(nakedBuffKey, 8);
+        map.put(armorNerfKey, 2 * armorMultiplier);
+        map.put(eProtLowBuffKey, 10);
+        map.put(eProtNerfKey, 11000);
+        return map;
+    }
+
+    public static HashMap<String, Boolean> defaultBools() {
+        HashMap<String, Boolean> map = new HashMap<>();
+        map.put(vanillaArmorKey, false);
+        map.put(vanillaEnchKey, false);
+        map.put(vanillaDamageKey, false);
+        map.put(sendFeedbackKey, false);
+        return map;
     }
 
 }
