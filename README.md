@@ -43,6 +43,7 @@ Here's what you can change related to enchantments (also marked in blue (wow)):
 
 For a start you can run `/armortweaks showall` to see all the current values to base your changes off of.  
 To change a value you'll have to run `/armortweaks set {variable} {value}`.  
+`/armortweaks reset {variable}` sets the value back to default.  
 To see the impact of what you've changed you can run `/armortweaks set damageFeedback true`. This will send you a message every time you take damage or damage another entity, displaying damage before and after different damage calculations.
 
 You can also disable different parts of the mod by changing some boolean values via `/armortweaks set...`.  
