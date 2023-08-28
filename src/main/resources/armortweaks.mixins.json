@@ -4,7 +4,11 @@
   "package": "net.blumbo.armortweaks.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LivingEntityMixin"
+    "EnderPearlEntityMixin",
+    "ExplosionMixin",
+    "LivingEntityMixin",
+    "MinecraftServerMixin",
+    "RespawnAnchorMixin"
   ],
   "client": [
   ],
