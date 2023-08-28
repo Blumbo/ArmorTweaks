@@ -1,87 +1,52 @@
-# ArmorTweaks
+# ArmorTweaks v2
 
-ArmorTweaks is a fabric mod that changes the way Minecraft armor calculations work, made for exmperimental purposes and ranting.
+ArmorTweaks (v2) is a fabric mod that changes different armor and damage mechanics to make survival more suitable for PvP.
 
-# Download
+# Main features
+- Players take less damage by default, but armor matters less and full netherite is weaker than in vanilla
+- Enchantment protection has been nerfed and is no longer infinitely strong at a certain protection level
+- Enchantment protection is no longer capped at 20
+- All explosions deal ~70% of vanilla damage to balance the damage calculation changes
+- Anchor explosion power reduced from 5 to 4.5
+- Pearl damage decreased from 2.5 to 2 hearts
+- Pearl damage untied from feather falling enchantment
 
-1.18.1: https://github.com/Blumbo/ArmorTweaks/releases/download/v1.0/armortweaks-1.18.1-1.0.jar
-
-Combat Test 8c: https://github.com/Blumbo/ArmorTweaks/releases/download/Combat-Test-8c-v1.0/armortweaks-1.16_combat-6-1.0.jar
-Tutorial on installing mods for combat snapshots: https://www.youtube.com/watch?v=XmNWU-tQs_c
-
-# What does it exactly do
+# Nerdy stuff
 
 Minecraft currently uses this formula to calculate damage:
 <p align="left">
   <img src="https://i.imgur.com/IN3oP7W.png" width="700" title="hover text">
 </p>
 
-In my opinion vanilla armor calculations have some flaws, so I created the mod to experiment with different armor calculations. Here's what the mod uses to calculate damage:
-
+The mod (with default settings) instead uses this formula to calculate damage:
 <p align="left">
-  <img src="https://i.imgur.com/uwlAqKh.png" width="500" title="hover text">
+  <img src="https://i.imgur.com/W2gDFHY.png" width="808" title="hover text">
 </p>
 
-Here's a quick explanation of what different things mean:  
-- max(a, b) means that the highest value of a and b will be used. For example if a > b, then max(a,b) is equal to a. If b > a, then max(a,b) is equal to b.  
-- min(a, b) means that the lowest value of a and b will be used.  
-- damage stands for how much damage was originally done (for example the attack damage of a weapon which was used).  
-- final damage is how much damage the player will end up taking.  
-- armor is the amount of armor points the player's armor has.  
-- toughness is the amount of armor toughness points the player's armor has.  
-- enchantment prot is how much enchantment protection the player has. For example, Protection IV on each piece of armor gives 16 protection points.
-<a/>
+*`max(a, b)` means that the highest value of `a` and `b` will be used. For example `max(20, 1)` would be 20, `max(5, 30)` would be 30.  
+`min(a, b)` function does the opposite.
 
-# Modifying variables in the mod
-The mod uses scoreboard values to allow configuring the mod and changing some variables of the formula in-game.
-### Setup
-In order to change anything you first need create a dummy scoreboard objective named "armor.tweaks" using the following command:  
-**/scoreboard objectives add armor.tweaks dummy**  
-I also recommend adding the scoreboard to the sidebar for a better overview of what you will have changed later on:  
-**/scoreboard objectives setdisplay sidebar armor.tweaks**  
-You can't see a sidebar yet, but as soon as you add a value to the scoreboard a sidebar will appear.
+### Configuring variables in the formula
+You can change some variables in the damage calculation formula via commands.
 
-### Modifying values in the formula
-Here's what you're able to change in the formula:
+Here's what you can change related to armor (marked in blue):
 <p align="left">
-  <img src="https://i.imgur.com/tMUlHSu.png" width="650" title="hover text">
+  <img src="https://i.imgur.com/gwf85KH.png" width="796" title="hover text">
 </p>
 
-To change armor.divisor use the following command:  
-**/scoreboard players set armor.divisor armor.tweaks (your value)**  
-Reasonable numbers for armor.divisor are something between 25 and 125. Setting this below 1 sets it back to it's default value 30.
-
-To change enchantment.nerf use the following command:  
-**/scoreboard players set enchantment.nerf armor.tweaks (your value)**  
-Reasonable numbers for enchantment.nerf are something between 2 and 30.  Setting this below 1 sets it back to it's default value 15.
-
-### Disabling parts of the formula
-You can also replace parts of the mod formula with parts from the vanilla formula and basically make the mod change nothing.
+Here's what you can change related to enchantments (also marked in blue (wow)):
 <p align="left">
-  <img src="https://i.imgur.com/MnDgpvs.png" width="650" title="hover text">
+  <img src="https://i.imgur.com/G8qBXab.png" width="705" title="hover text">
 </p>
 
-To stop the mod from changing non-enchantment related calculations (marked in blue) use the following command:  
-**/scoreboard players set vanilla.armor armor.tweaks 1**  
-To change it back set the score back to 0.
+(I split those up so they would fit on the screen)
 
-To stop the mod from changing enchantment related calculations (marked in purple) use the following command:  
-**/scoreboard players set vanilla.enchantment armor.tweaks 1**  
-To change it back set the score back to 0.
+For a start you can run `/armortweaks showall` to see all the current values to base your changes off of.  
+To change a value you'll have to run `/armortweaks set {variable} {value}`.  
+`/armortweaks reset {variable}` sets the value back to default.  
+To see the impact of what you've changed you can run `/armortweaks set damageFeedback true`. This will send you a message every time you take damage or damage another entity, displaying damage before and after different damage calculations.
 
-### Enabling/disabling damage feedback messages
-By default, the mod sends a message into the console every time an entity gets hit. The message displays 3 values and looks something like this:  
-Base: 10.0 | Armor: 5.0 | Enchantments: 2.5  
-"Base" shows the damage originally done, "Armor" shows damage after armor calculations and "Enchantments" shows damage after enchantment (or all) calculations.
-
-To disable this feature use the following command:  
-**/scoreboard players set send.damage armor.tweaks -1**
-
-You can also make the message get sent to the attacker and the player taking damage with the following command:  
-**/scoreboard players set send.damage armor.tweaks 1**  
-In the chat this will look something like:
-<p align="left">
-  <img src="https://i.imgur.com/sdgXjB3.png" width="500" title="hover text">
-</p>
-
-To reset this to console-only, set the value back to 0.
+You can also disable different parts of the mod by changing some boolean values via `/armortweaks set...`.  
+`vanillaArmor` disables modded armor (not enchantment) calculations if set to true.  
+`vanillaEnch` disables modded enchantment calculations if set to true.  
+`vanillaDamage` disables all modded damage changes (eg explosives, pearls) if set to true.  
