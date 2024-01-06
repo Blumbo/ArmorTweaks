@@ -21,6 +21,7 @@ public class ArmorTweaksCmd {
                                 CommandManager.RegistrationEnvironment environment) {
 
         LiteralArgumentBuilder<ServerCommandSource> argumentBuilder = CommandManager.literal("armortweaks")
+                .requires(commandSourceStack -> commandSourceStack.hasPermissionLevel(4)) // require op
                 .then(CommandManager.literal("showall").executes(ArmorTweaksCmd::showAll));
 
         LiteralArgumentBuilder<ServerCommandSource> set = CommandManager.literal("set");

@@ -3,8 +3,9 @@
   "id": "armortweaks",
   "version": "${version}",
   "name": "ArmorTweaks",
-  "description": "Mod that changes how armor calculations work slightly",
-  "authors": [],
+  "description": "ArmorTweaks changes how armor calculations work slightly.",
+  "authors": ["Blumbo"],
+  "contributors": ["NotCoded"],
   "contact": {},
   "license": "MIT",
   "environment": "*",
@@ -21,6 +22,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.9",
-    "minecraft": ">=1.20"
+    "minecraft": ">=1.20",
+    "fabric": "*"
   }
 }
