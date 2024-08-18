@@ -43,8 +43,8 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     // Modify armor protection
-    @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(FLnet/minecraft/entity/damage/DamageSource;FF)F"))
-    protected float applyArmorToDamage(float damage, DamageSource source, float armor, float armorToughness) {
+    @Redirect(method = "applyArmorToDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getDamageLeft(Lnet/minecraft/entity/LivingEntity;FLnet/minecraft/entity/damage/DamageSource;FF)F"))
+    protected float applyArmorToDamage(LivingEntity armorWearer, float damage, DamageSource damageSource, float armor, float armorToughness) {
         if (!useVanillaArmor()) {
             armor = get(ArmorTweaks.nakedBuffKey) + armor * ArmorTweaks.armorMultiplier / get(ArmorTweaks.armorNerfKey);
         }
